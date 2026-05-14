@@ -55,18 +55,19 @@ export const ModalProvider = ({ children }) => {
         onHide={closeModal}
         centered
         className="custom-system-modal"
+        data-bs-theme={modalConfig.isConfirm ? "dark" : undefined}
       >
-        <Modal.Header closeButton className="border-0 pb-0">
+        <Modal.Header closeButton className={`border-0 pb-0${modalConfig.isConfirm ? " bg-dark text-white" : ""}`}>
           <Modal.Title
             className={`w-100 text-center fw-bold fs-4 text-${modalConfig.variant}`}
           >
             {modalConfig.title}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="px-4 py-3 text-center fs-5">
+        <Modal.Body className={`px-4 py-3 text-center fs-5${modalConfig.isConfirm ? " bg-dark text-white" : ""}`}>
           {modalConfig.message}
         </Modal.Body>
-        <Modal.Footer className="border-0 justify-content-center pb-4">
+        <Modal.Footer className={`border-0 justify-content-center pb-4${modalConfig.isConfirm ? " bg-dark" : ""}`}>
           {modalConfig.isConfirm ? (
             <>
               <Button
