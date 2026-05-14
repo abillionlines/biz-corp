@@ -1,0 +1,14 @@
+{
+  "name": "bootstrap-site-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start-backend": "cd backend && source ../.venv/bin/activate && python3 app.py",
+    "start-frontend": "cd frontend && npm run dev",
+    "dev": "npx concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "install-all": "npm install && cd frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

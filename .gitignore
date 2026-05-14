@@ -1,0 +1,51 @@
+# Python / Backend
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+instance/
+*.db
+*.sqlite3
+
+# Environment variables (NEVER commit secrets)
+.env
+.env.*
+!.env.example
+
+# Frontend
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Uploads (user-generated content, not source)
+backend/static/uploads/*
+!backend/static/uploads/.gitkeep
+
+# Project handoff / internal docs
+handoff_to_claude.md
+instructions.md
+mobileinstructions.md
