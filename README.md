@@ -1,117 +1,150 @@
-# bizcorp: The Ultimate Startup Ecosystem 🚀
+# bizcorp
 
-Welcome to **bizcorp**, a comprehensive business-oriented platform designed for modern startups, investors, and elite enterprises. This workspace integrates a full-stack architecture with a focus on professional UI/UX, seamless data persistence, and a healthy dose of butler-induced condescension.
-
----
-
-## 🏗 Architecture Overview
-
-The project is architected as a decoupled monorepo, separating core business logic and data management from the interactive user experience.
-
-- **Frontend:** A high-performance React application powered by **Vite**, utilizing **React-Bootstrap** for a consistent, "businessy" aesthetic.
-- **Backend:** A scalable **Flask** REST API organized with Blueprints for modularity, utilizing **SQLAlchemy ORM** for database abstraction.
-- **Database:** **SQLite3** for lightweight, file-based data persistence (ideal for rapid development and portability).
-- **Style System:** CSS-in-JS patterns mixed with a centralized variable system (`:root`) for global transitions and theme management.
+A full-stack business platform featuring a product shop, staff forum, internal admin portal, and an AI chat agent (Arthur). Built as a decoupled monorepo — React/Vite frontend deployed on **Vercel**, Flask backend deployed on **Render**.
 
 ---
 
-## 🎨 Frontend (React + Vite)
+## Stack
 
-The frontend is built for speed and responsiveness.
-
-### Key Components:
-
-- **`ModalProvider`**: A custom global state system that replaces standard browser dialogs with themed, branded Bootstrap modals (Prompt/Confirm).
-- **`CartProvider`**: Manages shopping state across sessions.
-- **Micro-interactions**: Enhanced UI feedback featuring "Pop" animations for cart additions (Button scaling at 1.1x and Cart Icon scaling at 1.4x).
-- **Dual-Theme Layout**: Intelligent routing that switches between `light-theme` (Business/Shop) and `dark-theme` (Forum/Internal) seamlessly.
-
-### Features:
-
-- **Solution Shop**: Categorized product listings with real-time cart totaling.
-- **Engage Forum**: A staff-only message board for internal communication.
-- **Internal Portal**: Admin view for managing orders, products, and posts.
+| Layer    | Technology                                             |
+| -------- | ------------------------------------------------------ |
+| Frontend | React 19, Vite, React-Bootstrap, React Router v7       |
+| Backend  | Python 3.14, Flask 3, SQLAlchemy, Flask-Migrate        |
+| Database | PostgreSQL (production via Render), SQLite (local dev) |
+| AI       | Groq API — Llama 3 (powers Arthur the butler)          |
+| CI/CD    | GitHub Actions → Vercel (frontend) + Render (backend)  |
 
 ---
 
-## ⚙️ Backend (Python Flask)
+## Features
 
-The backend follows a Blueprint-based modular structure:
-
-- **`/api/auth`**: Mock authentication flow for demo purposes.
-- **`/api/shop`**: Handles product retrieval and checkout logic.
-- **`/api/forum`**: Manages threaded posts, comments, and reactions.
-- **`/api/internal`**: Admin-exclusive endpoints for data management.
-- **`/api/bot`**: The crown jewel—our AI integration.
-
-### 🐧 The Condescending Butler API (`Arthur`)
-
-Integrated via the **Groq API** (running Llama-3.1), Arthur is our resident AI Butler.
-
-- **Arthur's Mission**: To answer user queries with extreme reluctance and peak British condescension.
-- **System Prompt Integrity**: Arthur is strictly bound to be sarcastic, formally polite, and dismissive. He finds your requests mediocre and will likely tell you so in under 20 words.
-- **Fallbacks**: If the API key is missing, Arthur remains true to form, blaming human incompetence for the misconfiguration.
+- **Shop** — Categorized product listings, real-time cart, checkout flow
+- **Forum** — Threaded posts with comments and reactions (staff only)
+- **Internal Portal** — Admin dashboard for managing orders, products, and posts
+- **Arthur** — AI chat agent powered by Groq; responds with mandatory British condescension
+- **Auth** — Username-based registration/login with role support (`user` / `admin`)
+- **File Uploads** — Image and document uploads stored under `backend/static/uploads/`
+- **Dual Theme** — Light theme for Shop/Home, dark theme for Forum/Internal, driven by route
 
 ---
 
-## 🛠 Setup & Installation
+## Local Development
 
 ### Prerequisites
 
-- Python 3.8+
-- Node.js 16+
-- Groq API Key (Optional, for Arthur's wit)
+- Python 3.14+
+- Node.js 20+
+- A Groq API key (optional — Arthur degrades gracefully without it)
 
-### 1. Backend Setup
+### 1. Clone and install
+
+```bash
+git clone <your-repo-url>
+cd bizcorp
+npm run install-all   # installs root + frontend node_modules
+```
+
+### 2. Backend
+
+```bash
+# Create and activate the virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+pip install -r backend/requirements.txt
+```
+
+Create `backend/.env`:
+
+```
+GROQ_API_KEY=your_groq_key_here
+SECRET_KEY=any-local-secret
+# DATABASE_URL defaults to SQLite if omitted
+```
 
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate  # macOS/Linux
-pip install -r requirements.txt
-# Create a .env file with GROQ_API_KEY
-python app.py
+python app.py        # runs on http://localhost:5001
 ```
 
-### 2. Frontend Setup
+### 3. Frontend
+
+Create `frontend/.env`:
+
+```
+VITE_API_BASE_URL=http://localhost:5001
+```
 
 ```bash
 cd frontend
-npm install
+npm run dev          # runs on http://localhost:5173
+```
+
+Or run both together from the project root:
+
+```bash
 npm run dev
 ```
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 bizcorp/
 ├── backend/
-│   ├── api/             # Blueprint modules (Arthur resides here)
-│   ├── instance/        # SQLite Database storage
-│   ├── models/          # SQLAlchemy Database schemas
-│   ├── static/          # Uploaded assets and images
-│   └── config.py        # Centralized configuration
+│   ├── api/              # Flask Blueprints (auth, shop, forum, bot, internal)
+│   ├── models/           # SQLAlchemy models
+│   ├── static/uploads/   # User-uploaded files
+│   ├── config.py         # Environment-driven configuration
+│   ├── app.py            # App factory
+│   └── requirements.txt
 ├── frontend/
-│   ├── src/
-│   │   ├── components/  # Global UI elements
-│   │   ├── features/    # Module-specific pages (Shop, Forum, Home)
-│   │   ├── store/       # Global context (Auth, Cart, Modals)
-│   │   └── App.jsx      # Root routing logic
-└── README.md            # You are here
+│   └── src/
+│       ├── components/   # Shared UI (Navbar, AuthModal, ChatAgent, etc.)
+│       ├── features/     # Page modules (home, shop, forum, details)
+│       └── store/        # React context (Auth, Cart, Modal)
+├── .github/workflows/
+│   └── ci.yml            # GitHub Actions — lint + build on every push/PR
+├── render.yaml           # Render blueprint (web service + PostgreSQL)
+└── vercel.json           # Vercel config (builds frontend/dist)
 ```
 
 ---
 
-## 🧼 Codebase Philosophy
+## Deployment
 
-This project adheres to a "No-Slop" philosophy:
+### Backend → Render
 
-- **Zero Inline Styles**: All styling is class-based or variable-driven.
-- **Feature Encapsulation**: Components are grouped by feature, not just type.
-- **Clean Configuration**: No hardcoded paths; absolute pathing derived from `BASE_DIR`.
+1. In Render, create a new **Blueprint** and point it at this repo — `render.yaml` handles the rest.
+2. After the first deploy, set these env vars manually in the Render dashboard:
+   - `GROQ_API_KEY`
+   - `ALLOWED_ORIGINS` — your Vercel frontend URL (e.g. `https://bizcorp.vercel.app`)
+   - `SECRET_KEY` is auto-generated by Render.
+
+### Frontend → Vercel
+
+1. Import this repo in Vercel — `vercel.json` configures the build automatically.
+2. Add one env var:
+   - `VITE_API_BASE_URL` — your Render backend URL (e.g. `https://bizcorp-backend.onrender.com`)
+
+### CI (GitHub Actions)
+
+Every push or PR to `main` runs two jobs:
+
+- **Backend** — installs dependencies and verifies the app factory imports cleanly
+- **Frontend** — `npm ci`, ESLint, `vite build`
+
+Add `VITE_API_BASE_URL` as a GitHub Actions secret (repo Settings → Secrets) so CI builds succeed.
 
 ---
 
-_Created for EnterpriseCorp Systems - Internal Portal Access v2.4_
+## Environment Variables Reference
+
+| Variable            | Where                    | Description                                  |
+| ------------------- | ------------------------ | -------------------------------------------- |
+| `GROQ_API_KEY`      | backend `.env` / Render  | Groq API key for Arthur                      |
+| `SECRET_KEY`        | backend `.env` / Render  | Flask secret (auto-generated on Render)      |
+| `DATABASE_URL`      | Render (auto-injected)   | PostgreSQL connection string                 |
+| `ALLOWED_ORIGINS`   | Render                   | Comma-separated list of allowed CORS origins |
+| `VITE_API_BASE_URL` | frontend `.env` / Vercel | Backend API base URL                         |
