@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, current_app
-from models.models import Post, Reaction, Reply, db
+from models.models import Post, Reaction, Reply, User, db
 from utils.scraper import get_link_metadata
 import re
 import os
@@ -91,11 +91,16 @@ def create_post():
     
     attachment_url, attachment_name = process_file_upload(file)
 
+    user_id = data.get('user_id')
+    if not user_id:
+        guest = User.query.filter_by(username='DemoUser').first()
+        user_id = guest.id if guest else 1
+
     new_post = Post(
         title=data.get('title'),
         content=content,
         channel=data.get('channel', 'general-discussion'),
-        user_id=data.get('user_id'),
+        user_id=user_id,
         attachment_url=attachment_url or data.get('attachment_url'),
         attachment_name=attachment_name or data.get('attachment_name'),
         link_preview=preview
@@ -130,9 +135,14 @@ def add_reply(post_id):
 
     attachment_url, attachment_name = process_file_upload(file)
 
+    user_id = data.get('user_id')
+    if not user_id:
+        guest = User.query.filter_by(username='DemoUser').first()
+        user_id = guest.id if guest else 1
+
     reply = Reply(
         content=data.get('content'),
-        user_id=data.get('user_id'),
+        user_id=user_id,
         post_id=post_id,
         attachment_url=attachment_url or data.get('attachment_url'),
         attachment_name=attachment_name or data.get('attachment_name')

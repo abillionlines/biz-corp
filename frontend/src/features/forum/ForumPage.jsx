@@ -101,17 +101,12 @@ const ForumPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user)
-      return showPrompt(
-        "You must be logged in to post to the community.",
-        "Authentication Required",
-      );
     if (!title.trim() && !file) return;
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("user_id", user.id);
+    if (user) formData.append("user_id", user.id);
     formData.append("channel", activeChannel);
     if (file) formData.append("file", file);
 
@@ -129,17 +124,12 @@ const ForumPage = () => {
   };
 
   const handleReply = async (parentPostId) => {
-    if (!user)
-      return showPrompt(
-        "You must be logged in to reply.",
-        "Authentication Required",
-      );
     const rContent = replyContents[parentPostId];
     if (!rContent) return;
 
     const formData = new FormData();
     formData.append("content", rContent);
-    formData.append("user_id", user.id);
+    if (user) formData.append("user_id", user.id);
 
     try {
       // For a Slack-like experience, we keep it simple:
