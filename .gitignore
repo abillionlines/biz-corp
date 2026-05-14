@@ -28,6 +28,11 @@ frontend/dist-ssr/
 
 # Editor
 .vscode/
+
+# OG image generation
+scripts/og-image-notes.txt
+frontend/public/city-bg-wide.png
+frontend/public/city-bg-square.png
 .idea/
 *.suo
 *.ntvs*
