@@ -18,8 +18,14 @@ def get_products():
 @shop_bp.route('/checkout', methods=['POST'])
 def checkout():
     data = request.json
+    user_id = data.get('user_id')
+
+    # Guest checkout (no logged-in user) — record-less success for demo
+    if not user_id:
+        return jsonify({'message': 'Order placed successfully', 'order_id': None})
+
     new_order = Order(
-        user_id=data.get('user_id'),
+        user_id=user_id,
         total_price=data.get('total_price'),
         items=data.get('items')
     )
