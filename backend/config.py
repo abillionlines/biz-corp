@@ -11,6 +11,10 @@ class Config:
         f"sqlite:///{os.path.join(BASE_DIR, 'instance', 'dev.db')}"
     SQLALCHEMY_DATABASE_URI = _db_url.replace('postgres://', 'postgresql://', 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,   # discard stale connections after Neon auto-suspend
+        "pool_recycle": 300,     # recycle connections every 5 min
+    }
     
     # Uploads
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')

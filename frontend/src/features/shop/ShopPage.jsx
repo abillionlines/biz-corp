@@ -11,21 +11,45 @@ const solutionImages = [
   "/D4E61537-4B62-4782-AF36-8390BAEC2CCE_4_5005_c.jpeg",
 ];
 
+const MAX_RETRIES = 4;
+const RETRY_DELAY_MS = 3000;
+
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
   const [poppingId, setPoppingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const [failed, setFailed] = useState(false);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    let cancelled = false;
+
+    const fetchProducts = async (attempt = 0) => {
       try {
         const res = await axios.get(`${API_BASE}/api/shop/products`);
-        setProducts(res.data);
+        if (!cancelled) {
+          setProducts(res.data);
+          setLoading(false);
+          setFailed(false);
+        }
       } catch (err) {
-        console.error(err);
+        if (cancelled) return;
+        if (attempt < MAX_RETRIES) {
+          setRetryCount(attempt + 1);
+          setTimeout(() => fetchProducts(attempt + 1), RETRY_DELAY_MS);
+        } else {
+          setLoading(false);
+          setFailed(true);
+          console.error(err);
+        }
       }
     };
+
     fetchProducts();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleAddToCart = (product) => {
@@ -49,6 +73,25 @@ const ShopPage = () => {
             Enterprise Ready
           </Badge>
         </div>
+
+        {loading && (
+          <div className="text-center py-5 text-muted">
+            <div
+              className="spinner-border spinner-border-sm me-2"
+              role="status"
+            />
+            {retryCount === 0
+              ? "Loading solutions…"
+              : `Connecting to server… (attempt ${retryCount + 1} of ${MAX_RETRIES + 1})`}
+          </div>
+        )}
+
+        {failed && (
+          <div className="text-center py-5 text-muted">
+            Unable to load solutions. Please refresh the page.
+          </div>
+        )}
+
         <Row>
           {products.map((product, index) => (
             <Col md={4} key={product.id} className="mb-4">
